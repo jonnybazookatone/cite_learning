@@ -26,6 +26,8 @@ Number of telescopes
 
 '''
 
+import sqlite3 as lite
+import sys
 import xlrd
 import time
 import unicodedata
@@ -38,25 +40,33 @@ def make_table(dbout="cilrn.db"):
     with con:
       cur = con.cursor()
       cur.execute("CREATE TABLE CiteLearning (Id INTEGER PRIMARY KEY, BibCode TEXT, CitationCount INTEGER, PubYear INTEGER, LengthOfAbstract INTEGER, LengthOfTitle INTEGER, NumberOfAuthors INTEGER);")
-      # Layout: ID number, 
-      path = ("\'Test path\'",)
-      cur.execute("INSERT INTO Copied(Path) VALUES (?);", path)
 
   except lite.Error, e:
     if con:
       con.rollback()
       print "Error %s:" % e.args[0]
-      sys.exit(1)
+      pass
 
   finally:
     if con:
       con.close()
 
-def add_content(inDictionary):
-  con = lite.connect('test.db')
+def add_content(inDictionary, dbin="cilrn.db"):
+  con = lite.connect(dbin)
   with con:
-    con.execute("INSERT INTO CiteLearning(BibCode,CitationCount) VALUES (?),(?);", (inDictionary,))
+    con.execute("INSERT INTO CiteLearning(BibCode,CitationCount) VALUES (?),(?);", (inDictionary["BibCode"], inDictionary["CitationCount"]))
   con.commit()
+
+def check_content(dbin="cilrn.db"):
+
+  con = lite.connect(dbin)
+  with con:
+    con.row_factory = lite.Row
+    cur = con.cursor() 
+    cur.execute("SELECT BibCode FROM CiteLearning")
+
+    rows = [i[0] for i in cur.fetchall()]
+    print rows
 
 def sanitize(value):
   if type(value)==unicode:
@@ -64,6 +74,9 @@ def sanitize(value):
   return value
 
 def main(db="/diska/home/jonny/sw/python/cite_learning/data/telbib-output.xlsx"):
+
+  make_table(dbout="cilrn.db")
+
   print "Reading in the excel document"
   start = time.time()
   wb = xlrd.open_workbook(db)
@@ -82,6 +95,7 @@ def main(db="/diska/home/jonny/sw/python/cite_learning/data/telbib-output.xlsx")
            "NumberOfAuthors": [],
            "AuthorRank": [],
           }
+
 
 
   for i in range(ws.nrows-1):
@@ -112,11 +126,16 @@ def main(db="/diska/home/jonny/sw/python/cite_learning/data/telbib-output.xlsx")
    
     db_arr["NumberOfAuthors"][idx] = len(db_arr["BibCode"][idx])
     
-
+    content = {}
     # Write a single entry for this BibCode
     for item in db_arr:
-      print item, db_arr[item][idx][0], db_arr[item][idx][-1]
+      content[item] = db_arr[item][idx][0]
+      print content
+
+    add_content(content, dbin="cilearn.db")
     print "\n\n"
+
+  check_content(dbin="cilearn.db")
      
 
 
