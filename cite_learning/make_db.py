@@ -132,10 +132,10 @@ def main(db="/diska/home/jonny/sw/python/cite_learning/data/telbib-output.xlsx")
       content[item] = db_arr[item][idx][0]
       print content
 
-    add_content(content, dbin="cilearn.db")
+    add_content(content, dbin="cilrn.db")
     print "\n\n"
 
-  check_content(dbin="cilearn.db")
+  check_content(dbin="cilrn.db")
      
 
 
