@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 
-'''Pulled from Vlad's software: https://github.com/vsudilov/vss-flask/blob/master/utils/make_db.py'''
+'''Pulled from Vlad's software: https://github.com/vsudilov/vss-flask/blob/master/utils/make_db.py
+
+Header:
+
+[text:u'BibCode', text:u'CitationCount', text:u'PubYear', text:u'AuthorName', text:u'AuthorRank', text:u'Journal', text:u'Telescope', text:u'Affiliation', text:u'Title', text:u'Abstract']
+
+'''
 
 import xlrd
 import time
@@ -11,7 +17,7 @@ def sanitize(value):
     return unicodedata.normalize('NFKD',value.replace(u'\xc3\xbc','ue')).encode('ascii', 'ignore') #Manually put "ue" in u-umlaut...Need to use a better solution eventually
   return value
 
-def main(db="/diska/home/jonny/sw/python/mlearning/data/telbib-output.xlsx"):
+def main(db="/diska/home/jonny/sw/python/cite_learning/data/telbib-output.xlsx"):
   print "Reading in the excel document"
   start = time.time()
   wb = xlrd.open_workbook(db)

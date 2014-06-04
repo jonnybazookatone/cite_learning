@@ -51,22 +51,28 @@ def make_table(dbout="cilrn.db"):
     if con:
       con.close()
 
-def add_content(inDictionary, dbin="cilrn.db"):
+def add_content(intuple, dbin="cilrn.db"):
   con = lite.connect(dbin)
   with con:
-    con.execute("INSERT INTO CiteLearning(BibCode,CitationCount) VALUES (?),(?);", (inDictionary["BibCode"], inDictionary["CitationCount"]))
+    con.execute("INSERT INTO CiteLearning(BibCode,CitationCount,PubYear,LengthOfAbstract,LengthOfTitle,NumberOfAuthors) VALUES (?,?,?,?,?,?);", (intuple))
   con.commit()
+
+def remove_content(dbin="cilrn.db"):
+  con = lite.connect('cilrn.db')
+  with con:
+    con.execute("DELETE FROM CiteLearning;")
+    con.commit()
 
 def check_content(dbin="cilrn.db"):
 
   con = lite.connect(dbin)
   with con:
     con.row_factory = lite.Row
-    cur = con.cursor() 
-    cur.execute("SELECT BibCode FROM CiteLearning")
+    cur = con.cursor()
+    cur.execute("SELECT * FROM CiteLearning")
 
-    rows = [i[0] for i in cur.fetchall()]
-    print rows
+    for i in cur.fetchall():
+      print i
 
 def sanitize(value):
   if type(value)==unicode:
@@ -113,9 +119,6 @@ def main(db="/diska/home/jonny/sw/python/cite_learning/data/telbib-output.xlsx")
     db_arr["NumberOfAuthors"].append(0)
     db_arr["AuthorRank"].append(AuthorRank)
 
-    if i == 20:
-      break
-
   # Convert to numpy arrays
   for item in db_arr:
     db_arr[item] = numpy.array(db_arr[item])
@@ -130,12 +133,14 @@ def main(db="/diska/home/jonny/sw/python/cite_learning/data/telbib-output.xlsx")
     # Write a single entry for this BibCode
     for item in db_arr:
       content[item] = db_arr[item][idx][0]
-      print content
+    content_tuple = (content["BibCode"], content["CitationCount"], content["PubYear"], content["LengthOfAbstract"], content["LengthOfTitle"], content["NumberOfAuthors"])
+    add_content(content_tuple, dbin="cilrn.db")
 
-    add_content(content, dbin="cilrn.db")
-    print "\n\n"
-
+  print "Checking content....."
+  print "---------------------"
   check_content(dbin="cilrn.db")
+  print "---------------------"
+  print "...finished checking."
      
 
 
