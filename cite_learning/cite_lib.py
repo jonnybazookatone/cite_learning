@@ -39,12 +39,14 @@ def add_content(intuple, dbin="cilrn.db"):
   with con:
     con.execute("INSERT INTO CiteLearning(BibCode,CitationCount,PubYear,LengthOfAbstract,LengthOfTitle,NumberOfAuthors) VALUES (?,?,?,?,?,?);", (intuple))
   con.commit()
+  con.close()
 
 def remove_content(dbin="cilrn.db"):
   con = lite.connect('cilrn.db')
   with con:
     con.execute("DELETE FROM CiteLearning;")
     con.commit()
+  con.close()
 
 def check_content(dbin="cilrn.db", search="*"):
 
@@ -60,6 +62,7 @@ def check_content(dbin="cilrn.db", search="*"):
       for i in out:
         print i
 
+  con.close()
   return out
 
 # Excel spreadsheet parsing

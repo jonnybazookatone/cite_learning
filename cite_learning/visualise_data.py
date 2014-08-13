@@ -12,7 +12,7 @@ __email__ = "jonnynelliott@googlemail.com"
 __status__ = "Development"
 
 import matplotlib
-matplotlib.use("TKAgg")
+#matplotlib.use("TKAgg")
 import matplotlib.pyplot as plt
 import numpy
 
