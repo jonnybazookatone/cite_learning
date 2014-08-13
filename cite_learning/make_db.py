@@ -85,6 +85,10 @@ def main(db="/diska/home/jonny/sw/python/cite_learning/data/telbib-output.xlsx")
   for item in db_arr:
     db_arr[item] = numpy.array(db_arr[item])
 
+
+  out_csv = open("cilearn.csv", "w")
+  out_csv.write("BibCode,CitationCount,PubYear,LengthOfAbstract,LengthOfTitle,NumberOfAuthors\n")
+
   # Calculate number of authors per bibcode
   for bibcode in list(set(db_arr["BibCode"])):
     idx = db_arr["BibCode"] == bibcode
@@ -97,6 +101,9 @@ def main(db="/diska/home/jonny/sw/python/cite_learning/data/telbib-output.xlsx")
       content[item] = db_arr[item][idx][0]
     content_tuple = (content["BibCode"], content["CitationCount"], content["PubYear"], content["LengthOfAbstract"], content["LengthOfTitle"], content["NumberOfAuthors"])
     add_content(content_tuple, dbin="cilrn.db")
+    out_csv.write(",".join(["%s" % i for i in content_tuple]) + "\n")
+
+  out_csv.close()
 
   print "Checking content....."
   print "---------------------"
