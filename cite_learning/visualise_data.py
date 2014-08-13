@@ -16,7 +16,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy
 
-from cite_lib import check_content
+from cite_lib import check_content, svd_pca
 
 def main():
 
@@ -42,12 +42,21 @@ def main():
   print "...loaded feature matrix:\n"
   print "Number of data entries (rows): %d\nNumber of features (columns):  %d" % feature_matrix.shape
 
+  print "Deconstructing into 2 dimensions with PCA..."
+
+  M = numpy.concatenate((feature_matrix, measured_matrix), axis=1)
+  z, d = svd_pca(M, k=2)
+  print "Variances: %s" % d
+  print "New size: %d x %d" % z.shape
+
   # Load figure canvas
   fig = plt.figure(0)
-  ax1 = fig.add_subplot(221)
-  ax2 = fig.add_subplot(222)
-  ax3 = fig.add_subplot(223)
-  ax4 = fig.add_subplot(224)
+  ax1 = fig.add_subplot(321)
+  ax2 = fig.add_subplot(322)
+  ax3 = fig.add_subplot(323)
+  ax4 = fig.add_subplot(324)
+  ax5 = fig.add_subplot(325)
+
   ax1.errorbar(feature_matrix[:,0], measured_matrix, fmt="o", color="blue")
   ax1.set_xlabel("Publication year")
   ax1.set_ylabel("Citation count")
@@ -63,6 +72,10 @@ def main():
   ax4.errorbar(feature_matrix[:,3], measured_matrix, fmt="o", color="black")
   ax4.set_xlabel("Number of authors")
   ax4.set_ylabel("Citation count")
+
+  ax5.errorbar(z[:,0], z[:,1], fmt="o", color="cyan")
+  ax5.set_xlabel(r"$x_{1}$")
+  ax5.set_ylabel(r"$x_{2}$")
 
   plt.show()
 
