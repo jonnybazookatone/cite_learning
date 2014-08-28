@@ -26,13 +26,15 @@ def main():
   from sklearn.cross_validation import train_test_split
   from sklearn.decomposition import PCA
 
-  n_components = 4
-  pca = PCA(n_components=n_components)
+  n_components = 3
+  pca = PCA()
 
   df = pd.read_csv("cilearn.csv", encoding="utf-8")
   df.drop("BibCode", axis=1, inplace=True)
 
-  pca.fit(df[["LengthOfAbstract","LengthOfTitle","NumberOfAuthors", "PubYear"]])
+  print df
+
+  pca.fit(df[["LengthOfAbstract","LengthOfTitle","NumberOfAuthors","PubYear"]])
   M_pca = pca.fit_transform(df)
   M_df = {}
   M_df["CitationCount"] = df["CitationCount"].values
@@ -83,7 +85,10 @@ def main():
     fig = plt.figure(0)
     ax1 = fig.add_subplot(111)
 
-    ax1.errorbar(df_test["CitationCount"], result.predict(df_test), fmt="o")
+    #ax1.errorbar(df_test["CitationCount"], result.predict(df_test), fmt="o")
+    x = df_test["CitationCount"]
+    y = result.predict(df_test)
+    sns.jointplot(x, y, kind="hex");
 
     ax1.set_xlabel("Measured")
     ax1.set_ylabel("Predicted")
