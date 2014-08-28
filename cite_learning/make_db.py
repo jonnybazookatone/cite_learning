@@ -43,7 +43,7 @@ import numpy
 
 from cite_lib import make_table, add_content, remove_content, check_content, sanitize
 
-def main(db="/diska/home/jonny/sw/python/cite_learning/data/telbib-output.xlsx"):
+def main(db="telbib-output.xlsx"):
 
   make_table(dbout="cilrn.db")
 
